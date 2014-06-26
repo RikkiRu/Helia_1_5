@@ -1,0 +1,18 @@
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia_1_5_client\Helia_1_5_client\bin\Debug\Helia_1_5_client.exe.config
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia_1_5_client\Helia_1_5_client\bin\Debug\Helia_1_5_client.exe
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia_1_5_client\Helia_1_5_client\bin\Debug\Helia_1_5_client.pdb
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia_1_5_client\Helia_1_5_client\bin\Debug\OpenTK.Compatibility.dll
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia_1_5_client\Helia_1_5_client\bin\Debug\OpenTK.dll
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia_1_5_client\Helia_1_5_client\bin\Debug\OpenTK.GLControl.dll
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia_1_5_client\Helia_1_5_client\bin\Debug\OpenTK.pdb
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia_1_5_client\Helia_1_5_client\bin\Debug\OpenTK.xml
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia_1_5_client\Helia_1_5_client\bin\Debug\OpenTK.GLControl.xml
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia_1_5_client\Helia_1_5_client\obj\Debug\Helia_1_5_client.csprojResolveAssemblyReference.cache
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia_1_5_client\Helia_1_5_client\obj\Debug\Helia_1_5_client.FormGame.resources
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia_1_5_client\Helia_1_5_client\obj\Debug\Helia_1_5_client.Properties.Resources.resources
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia_1_5_client\Helia_1_5_client\obj\Debug\Helia_1_5_client.csproj.GenerateResource.Cache
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia_1_5_client\Helia_1_5_client\obj\Debug\Helia_1_5_client.exe
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia_1_5_client\Helia_1_5_client\obj\Debug\Helia_1_5_client.pdb
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia 1.5\Helia_1_5_client\Helia_1_5_client\bin\Debug\Helia_1_5_client.exe.config
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia 1.5\Helia_1_5_client\Helia_1_5_client\obj\Debug\Helia_1_5_client.exe
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia 1.5\Helia_1_5_client\Helia_1_5_client\obj\Debug\Helia_1_5_client.pdb
