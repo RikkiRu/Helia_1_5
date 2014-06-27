@@ -1,1 +1,12 @@
 C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia_1_5_server\Helia_1_5_server\bin\Debug\Helia_1_5_server.exe.config
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia 1.5\Helia_1_5_server\Helia_1_5_server\bin\Debug\Helia_1_5_server.exe.config
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia 1.5\Helia_1_5_server\Helia_1_5_server\obj\Debug\Helia_1_5_server.csprojResolveAssemblyReference.cache
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia 1.5\Helia_1_5_server\Helia_1_5_server\obj\Debug\Helia_1_5_server.FormMain.resources
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia 1.5\Helia_1_5_server\Helia_1_5_server\obj\Debug\Helia_1_5_server.Properties.Resources.resources
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia 1.5\Helia_1_5_server\Helia_1_5_server\obj\Debug\Helia_1_5_server.csproj.GenerateResource.Cache
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia 1.5\Helia_1_5_server\Helia_1_5_server\bin\Debug\Helia_1_5_server.exe
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia 1.5\Helia_1_5_server\Helia_1_5_server\bin\Debug\Helia_1_5_server.pdb
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia 1.5\Helia_1_5_server\Helia_1_5_server\bin\Debug\Helia_tcp_contract.dll
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia 1.5\Helia_1_5_server\Helia_1_5_server\bin\Debug\Helia_tcp_contract.pdb
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia 1.5\Helia_1_5_server\Helia_1_5_server\obj\Debug\Helia_1_5_server.exe
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia 1.5\Helia_1_5_server\Helia_1_5_server\obj\Debug\Helia_1_5_server.pdb

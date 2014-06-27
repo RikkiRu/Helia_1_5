@@ -16,5 +16,39 @@ namespace Helia_1_5_server
         {
             InitializeComponent();
         }
+
+        
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Run();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Stop();
+        }
+
+        private void FormMain_Load(object sender, EventArgs e)
+        {
+            Run();
+        }
+
+        private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Stop();
+        }
+
+        void Run()
+        {
+            manager.start();
+        }
+
+        void Stop()
+        {
+            manager.stop();
+        }
+
+       
     }
 }

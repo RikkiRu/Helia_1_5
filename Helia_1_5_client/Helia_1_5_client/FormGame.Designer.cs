@@ -54,6 +54,7 @@
             this.ClientSize = new System.Drawing.Size(789, 450);
             this.Controls.Add(this.glControl1);
             this.Name = "FormGame";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormGame_FormClosing);
             this.Load += new System.EventHandler(this.FormGame_Load);
             this.ResumeLayout(false);
 

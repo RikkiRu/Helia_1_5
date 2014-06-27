@@ -1,0 +1,5 @@
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia 1.5\Helia_tcp_contract\Helia_tcp_contract\obj\Debug\Helia_tcp_contract.csprojResolveAssemblyReference.cache
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia 1.5\Helia_tcp_contract\Helia_tcp_contract\bin\Debug\Helia_tcp_contract.dll
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia 1.5\Helia_tcp_contract\Helia_tcp_contract\bin\Debug\Helia_tcp_contract.pdb
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia 1.5\Helia_tcp_contract\Helia_tcp_contract\obj\Debug\Helia_tcp_contract.dll
+C:\Users\www.mobilkom.ru\Documents\Visual Studio 2013\Projects\Helia 1.5\Helia_tcp_contract\Helia_tcp_contract\obj\Debug\Helia_tcp_contract.pdb

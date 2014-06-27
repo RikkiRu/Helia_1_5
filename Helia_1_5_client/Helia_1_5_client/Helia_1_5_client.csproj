@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Helia_tcp_contract">
+      <HintPath>..\..\Helia_tcp_contract\Helia_tcp_contract\bin\Debug\Helia_tcp_contract.dll</HintPath>
+    </Reference>
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>D:\Programs\Open T.K. 1.1\Binaries\OpenTK\Release\OpenTK.dll</HintPath>
@@ -56,12 +59,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConnectionClient.cs" />
     <Compile Include="FormGame.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FormGame.Designer.cs">
       <DependentUpon>FormGame.cs</DependentUpon>
     </Compile>
+    <Compile Include="gameIerarchy.cs" />
+    <Compile Include="objDrawer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Render.cs" />

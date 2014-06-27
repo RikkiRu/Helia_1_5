@@ -20,14 +20,14 @@ namespace Helia_1_5_client
 
         Render render;
         ConnectionClient connect;
-        public static string username="user1";
 
         private void FormGame_Load(object sender, EventArgs e)
         {
             render = new Render();
             connect = new ConnectionClient();
             connect.connect();
-            connect.send(new CommandServer(typeOfCommandServer.getAll, username));
+            connect.send(new CommandSC(typeOfCommand.getAll, null));
+
             render.Resize(glControl1.Width, glControl1.Height);
             timer1.Enabled = true;
         }
@@ -41,12 +41,6 @@ namespace Helia_1_5_client
         {
             render.main();
             glControl1.SwapBuffers();
-        }
-
-        private void FormGame_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            connect.send(new CommandServer(typeOfCommandServer.KillMe, username));
-            connect.disconnect();
         }
     }
 }

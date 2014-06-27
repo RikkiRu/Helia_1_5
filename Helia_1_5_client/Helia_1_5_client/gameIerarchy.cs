@@ -4,9 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Helia_tcp_contract
+namespace Helia_1_5_client
 {
-    public class Class1
-    {
-    }
+    
 }
