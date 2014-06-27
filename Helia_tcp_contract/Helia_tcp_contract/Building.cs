@@ -6,7 +6,8 @@ namespace Helia_tcp_contract
     public enum buildingsEnum
     {
        grass,
-       city
+       city,
+       forest
     }
 
     [Serializable]

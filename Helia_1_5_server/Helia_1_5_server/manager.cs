@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Helia_tcp_contract;
+using System.Drawing;
 
 namespace Helia_1_5_server
 {
@@ -15,7 +16,12 @@ namespace Helia_1_5_server
 
         public static List<Planet_nature> planets;
         public static List<Player> players;
-        
+
+        public static Color getRandColor()
+        {
+            Color res = Color.FromArgb(rand.Next(0, 256), rand.Next(0, 256), rand.Next(0, 256));
+            return res;
+        }
 
         public static void start()
         {

@@ -4,6 +4,8 @@ using OpenTK.Graphics.OpenGL;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Collections.Generic;
+using System;
+using System.Linq;
 
 namespace Helia_1_5_client
 {
@@ -46,6 +48,8 @@ namespace Helia_1_5_client
 
     class objDrawer
     {
+        
+
         static int sizeOfVertexStruct = sizeof(float) * 2;
         static int sizeOfTextureStruct = sizeof(float) * 2;
 
@@ -94,9 +98,12 @@ namespace Helia_1_5_client
             textStatic[0].u = 0; textStatic[1].u = 1; textStatic[2].u = 1; textStatic[3].u = 0;
             textStatic[0].v = 0; textStatic[1].v = 0; textStatic[2].v = 1; textStatic[3].v = 1;
 
-            texData = new modelData[2];
+            texData = new modelData[5];
             texData[0] = new modelData("n_for");
             texData[1] = new modelData("pFlat");
+            texData[2] = new modelData("n_grass");
+            texData[3] = new modelData("none");
+            texData[4] = new modelData("pOverlay");
         }
     }
 
@@ -106,6 +113,7 @@ namespace Helia_1_5_client
     {
         public objDrawer ground;
         public string name;
+        public dSector[] sectors;
 
         public dPlanet(Planet_nature x)
         {
@@ -120,6 +128,76 @@ namespace Helia_1_5_client
 
             ground.x = x.x;
             ground.y = x.y;
+
+            sectors = new dSector[x.sectors.Length];
+            for(int i=0; i<x.sectors.Length; i++)
+            {
+                sectors[i] = new dSector(x.sectors[i], x, i, x.sectors.Length);
+            }
+        }
+    }
+
+    class dSector
+    {
+        public objDrawer building;
+        public objDrawer nature;
+        public objDrawer ownerOverlay;
+
+        public dSector(sector x, Planet_nature p, int number, int count)
+        { 
+            int texIDb=3;
+            int texIDn=3;
+
+            if(x.building!=null)
+            switch (x.building.type)
+            {
+                
+            }
+
+            switch(x.natureBuilding.type)
+            {
+                case buildingsEnum.grass: texIDn=2; break;
+                case buildingsEnum.forest: texIDn=0; break;
+            }
+
+            building = new objDrawer(sizes.standartSizeSmall, sizes.standartSizeSmall, texIDb);
+            nature = new objDrawer(sizes.standartSizeSmall, sizes.standartSizeSmall, texIDn);
+            ownerOverlay = new objDrawer(sizes.standartSizeSmall, sizes.standartSizeSmall, 4);
+
+            building.x = p.x;
+            nature.x = p.x;
+            building.y = p.y;
+            nature.y = p.y;
+            ownerOverlay.x = p.x;
+            ownerOverlay.y = p.y;
+
+            float secAngle = 360 / count*number;
+            
+
+            building.angle = secAngle;
+            nature.angle = secAngle;
+            ownerOverlay.angle = secAngle;
+
+            Player owner = Render.players.Where(c=>c.name==x.owner).FirstOrDefault();
+            if(owner!=null)
+            {
+                building.colorMask = owner.color;
+                ownerOverlay.colorMask = owner.color;
+            }
+
+            secAngle = secAngle / 57.0f;
+
+            float xCorr = (float)Math.Sin((double)secAngle) * p.radius;
+            float yCorr = (float)Math.Cos((double)secAngle) * p.radius;
+
+            nature.x += xCorr;
+            nature.y -= yCorr;
+
+            building.x += xCorr;
+            building.y -= yCorr;
+
+            ownerOverlay.x += xCorr / 1.7f;
+            ownerOverlay.y -= yCorr / 1.7f;
         }
     }
 }

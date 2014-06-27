@@ -14,7 +14,8 @@ namespace Helia_1_5_server
         public static List<Planet_nature> genNature()
         {
             List<Planet_nature> res = new List<Planet_nature>();
-            res.Add(getNewPlanet(PlanetType.flat, 50, 50, 10));
+            res.Add(getNewPlanet(PlanetType.flat, 30, 30, 10));
+            res.Add(getNewPlanet(PlanetType.flat, 80, 30, 5));
             return res;
         }
 
@@ -35,7 +36,7 @@ namespace Helia_1_5_server
             natPlanet.resources[1].type=ResouresType.air;
             natPlanet.resources[2].type=ResouresType.water;
             natPlanet.sectors = new sector[sectorsCount];
-            natPlanet.radius = manager.rand.Next(20, 40);
+            natPlanet.radius = manager.rand.Next(10, 20);
             natPlanet.type = type;
 
             switch(type)
@@ -44,7 +45,14 @@ namespace Helia_1_5_server
                     for (int i = 0; i < sectorsCount; i++ )
                     {
                         natPlanet.sectors[i] = new sector();
-                        natPlanet.sectors[i].natureBuilding = new Building(buildingsEnum.grass);
+                        if (manager.rand.Next(0, 2) == 1)
+                        {
+                            natPlanet.sectors[i].natureBuilding = new Building(buildingsEnum.grass);
+                        }
+                        else
+                        {
+                            natPlanet.sectors[i].natureBuilding = new Building(buildingsEnum.forest);
+                        }
                     }
                     break;
             }

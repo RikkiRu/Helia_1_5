@@ -3,6 +3,7 @@ using OpenTK.Graphics.OpenGL;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Collections.Generic;
+using Helia_tcp_contract;
 
 namespace Helia_1_5_client
 {
@@ -11,12 +12,13 @@ namespace Helia_1_5_client
         float ortoX = 0;
         float ortoY = 0;
 
-        public static List<dPlanet> planets=new List<dPlanet>();
+        public static List<dPlanet> planets = new List<dPlanet>();
+        public static List<Player> players = new List<Player>();
 
         public Render()
         {
             planets.Clear();
-
+            
             objDrawer.loadTextures();
 
             GL.ClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -37,8 +39,9 @@ namespace Helia_1_5_client
             GL.Viewport(0, 0, w, h);
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
-            if (w < h) { GL.Ortho(0, ortoX, ortoY / aspect, 0, -2, 2); ortoY = ortoY / aspect; }
-            else { GL.Ortho(0, ortoX * aspect, ortoY, 0, -2, 2); ortoX = ortoX * aspect; }
+            
+            if (w < h) { GL.Ortho(0, ortoX, ortoY / aspect, 0, -1, 1); }
+            else { GL.Ortho(0, ortoX * aspect, ortoY, 0, -1, 1); }
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadIdentity();
         }
@@ -52,6 +55,13 @@ namespace Helia_1_5_client
             for(int i=0; i<planets.Count; i++)
             {
                 planets[i].ground.draw();
+
+                for(int j=0; j<planets[i].sectors.Length; j++)
+                {
+                    planets[i].sectors[j].ownerOverlay.draw();
+                    planets[i].sectors[j].nature.draw();
+                    planets[i].sectors[j].building.draw();
+                }
             }
         }
     }

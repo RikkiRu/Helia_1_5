@@ -7,6 +7,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Helia_1_5_client
 {
@@ -56,6 +58,12 @@ namespace Helia_1_5_client
                         break;
                     case typeOfCommandClient.Exception:
                         MessageBox.Show(data.data.ToString());
+                        break;
+                    case typeOfCommandClient.AddPlayer:
+                        Player p = (Player)data.data;
+                        Player found = Render.players.Where(c => c.name == p.name).FirstOrDefault();
+                        if (found != null) Render.players.Remove(found);
+                        Render.players.Add(p);
                         break;
                 }
             }

@@ -48,7 +48,6 @@ namespace Helia_1_5_server
                 Socket s = (Socket)result.AsyncState;
                 ConnectionInfo connection = new ConnectionInfo();
                 connection.name = "init";
-                connections.Add(connection);
                 connection.Socket = s.EndAccept(result);
                 connection.Buffer = new byte[sizeOfMessage];
                 connection.Socket.BeginReceive(connection.Buffer, 0, sizeOfMessage, SocketFlags.None, new AsyncCallback(RecieveCallback), connection);
@@ -77,12 +76,14 @@ namespace Helia_1_5_server
                     case typeOfCommandServer.getAll:
                         try
                         {
+                            connection.name = data.data.ToString();
+
                             if (connections.Where(c => c.name == data.data.ToString()).FirstOrDefault() != null) 
                                 throw new Exception("Такое подключение уже есть! ");
                             if (manager.players.Where(c => (c.name == data.data.ToString() && c.playerState == PlayerState.online)).FirstOrDefault() != null)
                                 throw new Exception("Такой игрок есть онлайн! ");
 
-                            connection.name = data.data.ToString();
+                            
                             Console.WriteLine("Тук-тук! У нас новое подключение! " + connection.name);
                             connections.Add(connection);
 
@@ -155,7 +156,10 @@ namespace Helia_1_5_server
         //все данные игроку
         void sendAll(Socket connection)
         {
-            Console.WriteLine("get all command");
+            for (int i = 0; i < manager.players.Count; i++)
+            {
+                sendPlayer(connection, manager.players[i].name);
+            }
 
             for (int i = 0; i < manager.planets.Count; i++)
             {
@@ -165,14 +169,24 @@ namespace Helia_1_5_server
             }
         }
 
+        void sendPlayer(Socket s, string name)
+        {
+            Player p = manager.players.Where(c => c.name == name).FirstOrDefault();
+            if (p == null) return;
+            send(s, new CommandClient(typeOfCommandClient.AddPlayer, p));
+        }
+
         void createNewPlayer(string username)
         {
             Console.WriteLine("Создаем новго игрока " + username);
             Player user = new Player();
             user.name = username;
             user.playerState = PlayerState.online;
-
+            user.color = Color.Red;
+            manager.planets[0].sectors[3].owner = user.name;
             manager.players.Add(user);
         }
+
+       
     }
 }
