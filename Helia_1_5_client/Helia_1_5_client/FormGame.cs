@@ -8,6 +8,7 @@ using System.Windows.Forms;
 
 using OpenTK.Graphics.OpenGL;
 using Helia_tcp_contract;
+using System.Threading;
 
 namespace Helia_1_5_client
 {
@@ -30,15 +31,21 @@ namespace Helia_1_5_client
             connect.send(new CommandServer(typeOfCommandServer.getAll, username));
             render.Resize(glControl1.Width, glControl1.Height);
             timer1.Enabled = true;
+            //connect.send(new CommandServer(typeOfCommandServer.ping, 0));
         }
 
         private void glControl1_Resize(object sender, EventArgs e)
         {
-            render.Resize(glControl1.Width, glControl1.Height);
+            try
+            {
+                render.Resize(glControl1.Width, glControl1.Height);
+            }
+            catch { }
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            
             render.main();
             glControl1.SwapBuffers();
         }

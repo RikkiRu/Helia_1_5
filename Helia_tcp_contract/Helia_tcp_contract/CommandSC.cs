@@ -22,6 +22,7 @@ namespace Helia_tcp_contract
     {
         getAll,
         KillMe,
+        ping,
     }
 
     //==================================================================================
@@ -44,5 +45,6 @@ namespace Helia_tcp_contract
     {
         thatsAll,
         AddPlanetNature,
+        Exception,
     }
 }

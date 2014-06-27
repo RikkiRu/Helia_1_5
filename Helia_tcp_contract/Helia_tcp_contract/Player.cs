@@ -9,6 +9,7 @@ namespace Helia_tcp_contract
     {
         public string name;
         public Color color;
+        public PlayerState playerState;
 
         public Dictionary<string, Relations> relations;
         public List<Planet_government> governments;
@@ -21,5 +22,11 @@ namespace Helia_tcp_contract
         none,
         enemy,
         friend
+    }
+
+    [Serializable]
+    public enum PlayerState
+    {
+        online, offline
     }
 }

@@ -54,6 +54,9 @@ namespace Helia_1_5_client
                     case typeOfCommandClient.AddPlanetNature:
                         Render.planets.Add(new dPlanet((Planet_nature)data.data));
                         break;
+                    case typeOfCommandClient.Exception:
+                        MessageBox.Show(data.data.ToString());
+                        break;
                 }
             }
         }

@@ -47,7 +47,8 @@ namespace Helia_1_5_server
             {
                 Socket s = (Socket)result.AsyncState;
                 ConnectionInfo connection = new ConnectionInfo();
-                lock (connections) connections.Add(connection);
+                connection.name = "init";
+                connections.Add(connection);
                 connection.Socket = s.EndAccept(result);
                 connection.Buffer = new byte[sizeOfMessage];
                 connection.Socket.BeginReceive(connection.Buffer, 0, sizeOfMessage, SocketFlags.None, new AsyncCallback(RecieveCallback), connection);
@@ -64,7 +65,6 @@ namespace Helia_1_5_server
         void RecieveCallback(IAsyncResult result)
         {
             ConnectionInfo connection = (ConnectionInfo)result.AsyncState;
-            //Console.WriteLine("что-то произошло");
 
             try
             {
@@ -75,15 +75,53 @@ namespace Helia_1_5_server
                 switch(data.command)
                 {
                     case typeOfCommandServer.getAll:
-                        connection.name = data.data.ToString();
-                        connections.Add(connection);
-                        sendAll(connection.Socket); 
+                        try
+                        {
+                            if (connections.Where(c => c.name == data.data.ToString()).FirstOrDefault() != null) 
+                                throw new Exception("Такое подключение уже есть! ");
+                            if (manager.players.Where(c => (c.name == data.data.ToString() && c.playerState == PlayerState.online)).FirstOrDefault() != null)
+                                throw new Exception("Такой игрок есть онлайн! ");
+
+                            connection.name = data.data.ToString();
+                            Console.WriteLine("Тук-тук! У нас новое подключение! " + connection.name);
+                            connections.Add(connection);
+
+                            Player searchPl = manager.players.Where(c => c.name == connection.name).FirstOrDefault();
+                            if (searchPl == null)
+                            {
+                                createNewPlayer(connection.name);
+                            }
+                            else
+                            {
+                                searchPl.playerState = PlayerState.online;
+                            }
+
+                            sendAll(connection.Socket);
+                        }
+                        catch(Exception ex)
+                        {
+                            string message = ex.Message + connection.name;
+                            Console.WriteLine(message);
+                            send(connection.Socket, new CommandClient(typeOfCommandClient.Exception, message));
+                        }
                         break;
 
                     case typeOfCommandServer.KillMe:
+                        Player pForOff = manager.players.Where(c => c.name == connection.name).FirstOrDefault();
+                        if( pForOff!=null)
+                        {
+                            pForOff.playerState = PlayerState.offline;
+                            Console.WriteLine("Отключен " + pForOff.name);
+                        }
                         connections.Remove(connection);
                         break;
+
+                    case typeOfCommandServer.ping:
+                        send(connection.Socket, new CommandClient(typeOfCommandClient.Exception, "Сервер доступен"));
+                        break;
                 }
+
+                connection.Socket.BeginReceive(connection.Buffer, 0, sizeOfMessage, SocketFlags.None, new AsyncCallback(RecieveCallback), connection);
             }
 
             catch (Exception ex)
@@ -107,10 +145,12 @@ namespace Helia_1_5_server
         }
 
 
-
-
-
-
+        void send(Socket s, CommandClient command)
+        {
+            MemoryStream x = new MemoryStream();
+            binFormat.Serialize(x, command);
+            s.Send(x.GetBuffer());
+        }
 
         //все данные игроку
         void sendAll(Socket connection)
@@ -123,10 +163,16 @@ namespace Helia_1_5_server
                 binFormat.Serialize(x, new CommandClient(typeOfCommandClient.AddPlanetNature, manager.planets[i]));
                 connection.Send(x.GetBuffer());
             }
+        }
 
-            MemoryStream end = new MemoryStream();
-            binFormat.Serialize(end, new CommandClient(typeOfCommandClient.thatsAll, 0));
-            connection.Send(end.GetBuffer());
+        void createNewPlayer(string username)
+        {
+            Console.WriteLine("Создаем новго игрока " + username);
+            Player user = new Player();
+            user.name = username;
+            user.playerState = PlayerState.online;
+
+            manager.players.Add(user);
         }
     }
 }
