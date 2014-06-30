@@ -8,5 +8,12 @@ namespace Helia_tcp_contract
         public float x;
         public float y;
         public string owner;
+        public UnitType type;
+    }
+
+    [Serializable]
+    public enum UnitType
+    {
+        colonizator,
     }
 }

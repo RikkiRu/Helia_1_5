@@ -9,21 +9,53 @@ namespace Helia_1_5_server
 {
     class mapGenerator
     {
-        static int planetGenerated = 0;
+        static int planetGeneratedInRing = 0;
+        static int planetsToRing = 0;
+        static int ringN = 0;
+        static float distanceRings = 150;
 
         public static List<Planet_nature> genNature()
         {
             List<Planet_nature> res = new List<Planet_nature>();
-            res.Add(getNewPlanet(PlanetType.flat, 30, 30, 10));
-            res.Add(getNewPlanet(PlanetType.flat, 80, 30, 5));
+
+            float[] zero = {0,0};
+            res.Add(getNewPlanet(PlanetType.sun, zero));
+
+            for (int i = 0; i < 20; i++ )
+                res.Add(getNewPlanet(PlanetType.flat, coordPlanRing()));
+
             return res;
         }
 
-        static Planet_nature getNewPlanet(PlanetType type, float x, float y, int sectorsCount)
+        public static float[] coordPlanRing()
+        {
+            float[] xy = new float[2];
+
+            planetGeneratedInRing++;
+
+
+            if (planetGeneratedInRing > planetsToRing)
+            {
+                planetGeneratedInRing = 1;
+                planetsToRing = 8 + ringN * 4;
+                ringN++;
+            }
+
+            float angle = 360 / planetsToRing * planetGeneratedInRing / 57.0f;
+            float radius = distanceRings * ringN;
+
+            xy[0] = (float)Math.Sin((double)angle) * radius;
+            xy[1] = (float)Math.Cos((double)angle) * radius;
+
+            return xy;
+        }
+
+        static Planet_nature getNewPlanet(PlanetType type, float[] xy)
         {
             Planet_nature natPlanet = new Planet_nature();
-            natPlanet.x=x;
-            natPlanet.y=y;
+            natPlanet.x=xy[0];
+            natPlanet.y=xy[1];
+
             natPlanet.name=getPlanetName();
 
             natPlanet.resources = new Resource[3];
@@ -35,13 +67,18 @@ namespace Helia_1_5_server
             natPlanet.resources[0].type = ResouresType.garbage;
             natPlanet.resources[1].type=ResouresType.air;
             natPlanet.resources[2].type=ResouresType.water;
+
+            int sectorsCount = 10;
+            if (type == PlanetType.sun) sectorsCount = 1;
+
             natPlanet.sectors = new sector[sectorsCount];
-            natPlanet.radius = manager.rand.Next(10, 20);
+            
             natPlanet.type = type;
 
             switch(type)
             {
                 case PlanetType.flat:
+                    natPlanet.radius = manager.rand.Next(10, 20);
                     for (int i = 0; i < sectorsCount; i++ )
                     {
                         natPlanet.sectors[i] = new sector();
@@ -55,6 +92,15 @@ namespace Helia_1_5_server
                         }
                     }
                     break;
+
+                case PlanetType.sun:
+                    natPlanet.name = "Helios";
+                    natPlanet.radius = 50;
+                    for (int i = 0; i < sectorsCount; i++)
+                    {
+                        natPlanet.sectors[i] = new sector();
+                    }
+                    break;
             }
 
             return natPlanet;
@@ -62,8 +108,7 @@ namespace Helia_1_5_server
 
         static string getPlanetName()
         {
-            planetGenerated++;
-            return "Planet #" + planetGenerated.ToString();
+            return "Planet #" + planetGeneratedInRing.ToString();
         }
     }
 }

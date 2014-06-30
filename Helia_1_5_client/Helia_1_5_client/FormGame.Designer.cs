@@ -42,11 +42,13 @@
             this.glControl1.Size = new System.Drawing.Size(789, 450);
             this.glControl1.TabIndex = 0;
             this.glControl1.VSync = false;
+            this.glControl1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.glControl1_KeyDown);
+            this.glControl1.KeyUp += new System.Windows.Forms.KeyEventHandler(this.glControl1_KeyUp);
             this.glControl1.Resize += new System.EventHandler(this.glControl1_Resize);
             // 
             // timer1
             // 
-            this.timer1.Interval = 30;
+            this.timer1.Interval = 5000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // FormGame
@@ -54,7 +56,10 @@
             this.ClientSize = new System.Drawing.Size(789, 450);
             this.Controls.Add(this.glControl1);
             this.Name = "FormGame";
+            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Helia 1.5";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormGame_FormClosing);
             this.Load += new System.EventHandler(this.FormGame_Load);
             this.ResumeLayout(false);

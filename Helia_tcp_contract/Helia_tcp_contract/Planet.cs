@@ -6,7 +6,8 @@ namespace Helia_tcp_contract
     [Serializable]
     public enum PlanetType
     {
-        flat
+        flat,
+        sun
     }
 
     [Serializable]
@@ -16,7 +17,7 @@ namespace Helia_tcp_contract
         public float y;
         public float radius;
 
-        public string name;
+        public string name="default";
         public sector[] sectors;
         public Resource[] resources;
         public PlanetType type;

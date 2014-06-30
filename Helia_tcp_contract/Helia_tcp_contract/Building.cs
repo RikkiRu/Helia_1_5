@@ -7,7 +7,8 @@ namespace Helia_tcp_contract
     {
        grass,
        city,
-       forest
+       forest,
+       NotTheBuildingSUKA,
     }
 
     [Serializable]

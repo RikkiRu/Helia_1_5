@@ -7,9 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+
 
 namespace Helia_1_5_server
 {
@@ -83,7 +81,6 @@ namespace Helia_1_5_server
                             if (manager.players.Where(c => (c.name == data.data.ToString() && c.playerState == PlayerState.online)).FirstOrDefault() != null)
                                 throw new Exception("Такой игрок есть онлайн! ");
 
-                            
                             Console.WriteLine("Тук-тук! У нас новое подключение! " + connection.name);
                             connections.Add(connection);
 
@@ -94,7 +91,7 @@ namespace Helia_1_5_server
                             }
                             else
                             {
-                                searchPl.playerState = PlayerState.online;
+                               // searchPl.playerState = PlayerState.online; //ОБЯЗАТЕЛЬНО ВРУБИТЬ ПРИ РЕЛИЗЕ
                             }
 
                             sendAll(connection.Socket);
@@ -167,6 +164,9 @@ namespace Helia_1_5_server
                 binFormat.Serialize(x, new CommandClient(typeOfCommandClient.AddPlanetNature, manager.planets[i]));
                 connection.Send(x.GetBuffer());
             }
+            //
+            //
+            send(connection, new CommandClient(typeOfCommandClient.thatsAll, 0));
         }
 
         void sendPlayer(Socket s, string name)
@@ -181,9 +181,8 @@ namespace Helia_1_5_server
             Console.WriteLine("Создаем новго игрока " + username);
             Player user = new Player();
             user.name = username;
-            user.playerState = PlayerState.online;
+            //user.playerState = PlayerState.online; ВКЛЮЧИТЬ НА РЕЛИЗЕ
             user.color = Color.Red;
-            manager.planets[0].sectors[3].owner = user.name;
             manager.players.Add(user);
         }
 

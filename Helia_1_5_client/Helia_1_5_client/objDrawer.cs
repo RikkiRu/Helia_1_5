@@ -11,27 +11,87 @@ namespace Helia_1_5_client
 {
     class modelData
     {
-        public Bitmap bm;
-        public int texture;
+        public Bitmap[] Bitmaps = new Bitmap[1];
+        public int[] Textures=new int[1];
         public string name;
+        public int currentTexture = 0;
+        public int ticks = 0;
+        public int ticksNow = 0;
 
-        public modelData(string name)
+        public int texture
+        {
+            set
+            {
+                Textures[0] = value;
+            }
+
+            get
+            {
+                if (Textures.Length!=1)
+                {
+                    ticksNow++;
+                    if (ticksNow > ticks)
+                    {
+                        ticksNow = 0;
+                        currentTexture++;
+                        if (currentTexture >= Textures.Length) currentTexture = 0;
+                    }
+                }
+                return Textures[currentTexture];
+            }
+        }
+        public Bitmap bm
+        {
+            get { return Bitmaps[0]; }
+            set { Bitmaps[0] = value; }
+        }
+
+        public modelData(string name, int namesCount=1, int tiksSkip=0)
         {
             this.name = name;
-            this.bm = new Bitmap(Image.FromFile(@"Data/Textures/" + name + ".png"));
+            this.ticks = tiksSkip;
 
-            GL.GenTextures(1, out this.texture);
-            GL.BindTexture(TextureTarget.Texture2D, this.texture);
+            if(namesCount>1)
+            {
+                Textures = new int[namesCount];
+                Bitmaps = new Bitmap[namesCount];
 
-            BitmapData data = bm.LockBits(new Rectangle(0, 0, bm.Width, bm.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
+                for(int i=0; i<namesCount; i++)
+                {
+                    Bitmaps[i] = new Bitmap(Image.FromFile(@"Data/Textures/" + name + @"/" +i.ToString() + ".png"));
+                    Textures[i] = Render.parent.getTexture(Bitmaps[i]);
+                }
+            }
 
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)SgisTextureEdgeClamp.ClampToEdgeSgis); // при фильтрации игнорируются тексели, выходящие за границу текстуры для s координаты
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)SgisTextureEdgeClamp.ClampToEdgeSgis); // при фильтрации игнорируются тексели, выходящие за границу текстуры для t координаты
-            bm.UnlockBits(data);
+            else
+            {
+                this.bm = new Bitmap(Image.FromFile(@"Data/Textures/" + name + ".png"));
+            }
+
+            mainGen();
+        }
+
+        public modelData(Bitmap bm)
+        {
+            this.name = "";
+            this.bm = bm;
+            mainGen();
+        }
+
+        void mainGen()
+        {
+            //GL.GenTextures(1, out this.texture);
+            this.texture = Render.parent.getTexture(this.bm);
+            //Вы знаете сколько я мучался?! А оказывается openGL дергался из другого потока и не так генерил текстурки!!!
+        }
+
+        ~modelData()
+        {
+            try
+            {
+              if (OpenTK.Graphics.GraphicsContext.CurrentContext != null) GL.DeleteTextures(Textures.Length, Textures);
+            }
+            catch { }
         }
     }
 
@@ -48,10 +108,8 @@ namespace Helia_1_5_client
 
     class objDrawer
     {
-        
-
-        static int sizeOfVertexStruct = sizeof(float) * 2;
-        static int sizeOfTextureStruct = sizeof(float) * 2;
+        public static int sizeOfVertexStruct = sizeof(float) * 2;
+        public static int sizeOfTextureStruct = sizeof(float) * 2;
 
         public static modelData[] texData; //хранит все текстуры
         public static textureStruct[] textStatic = new textureStruct[4];
@@ -98,29 +156,149 @@ namespace Helia_1_5_client
             textStatic[0].u = 0; textStatic[1].u = 1; textStatic[2].u = 1; textStatic[3].u = 0;
             textStatic[0].v = 0; textStatic[1].v = 0; textStatic[2].v = 1; textStatic[3].v = 1;
 
-            texData = new modelData[5];
+            texData = new modelData[25];
             texData[0] = new modelData("n_for");
             texData[1] = new modelData("pFlat");
             texData[2] = new modelData("n_grass");
             texData[3] = new modelData("none");
             texData[4] = new modelData("pOverlay");
+
+            texData[5] = new modelData("planetIcon");
+            texData[6] = new modelData("o2");
+            texData[14] = new modelData("waterKaplya");
+            texData[8] = new modelData("smile");
+            texData[9] = new modelData("man");
+
+            texData[10] = new modelData("apple");
+            texData[11] = new modelData("gears");
+            texData[12] = new modelData("break");
+            texData[13] = new modelData("book");
+            texData[7] = new modelData("h2o");
+
+            texData[15] = new modelData("sun", 3, 20);
+            texData[16] = new modelData("onePixel");
         }
     }
 
+    class textDrawer
+    {
+        public modelData texData;
+        public vertexStruct[] vertexes = new vertexStruct[4];
+        public float x;
+        public float y;
+        public float angle;
 
+        static PointF pNull = new PointF(0, 0);
+        static Font fontM = new Font(FontFamily.GenericSansSerif, 48);
+
+        public void changeText(string text, Color textColor, Color backgoundColor)
+        {
+            texData = new modelData(getTextBitmap(text, textColor, backgoundColor));
+        }
+
+        public Bitmap getTextBitmap (string text, Color fColor, Color back)
+        {
+            int length = text.Length;
+            if (length == 0) length = 1;
+
+            Bitmap res = new Bitmap(length * fontM.Height/2, fontM.Height);
+            Graphics gr = Graphics.FromImage(res);
+            
+            SolidBrush solid = new SolidBrush(fColor);
+            gr.Clear(back);
+
+            gr.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+            gr.DrawString(text, fontM, solid, pNull);
+            return res;
+        }
+
+        public textDrawer(float sizeX, string text, Color textColor, Color backgoundColor, ContentAlignment aligin)
+        {
+            int length = text.Length;
+            if(length==0) length=1;
+
+            float sizeY = sizeX / (length) * 2;
+            texData = new modelData(getTextBitmap(text, textColor, backgoundColor));
+
+            switch (aligin)
+            {
+                default:
+                    sizeX = sizeX / 2;
+                    sizeY = sizeY / 2;
+                    vertexes[0].x = -sizeX;
+                    vertexes[0].y = -sizeY;
+                    vertexes[1].x = sizeX;
+                    vertexes[1].y = -sizeY;
+                    vertexes[2].x = sizeX;
+                    vertexes[2].y = sizeY;
+                    vertexes[3].x = -sizeX;
+                    vertexes[3].y = sizeY;
+                    break;
+
+                case ContentAlignment.TopLeft:
+                    vertexes[0].x = 0;
+                    vertexes[0].y = 0;
+                    vertexes[1].x = sizeX;
+                    vertexes[1].y = 0;
+                    vertexes[2].x = sizeX;
+                    vertexes[2].y = sizeY;
+                    vertexes[3].x = 0;
+                    vertexes[3].y = sizeY;
+                    break;
+
+                case ContentAlignment.BottomLeft:
+                    vertexes[0].x = 0;
+                    vertexes[0].y = -sizeY;
+                    vertexes[1].x = sizeX;
+                    vertexes[1].y = -sizeY;
+                    vertexes[2].x = sizeX;
+                    vertexes[2].y = 0;
+                    vertexes[3].x = 0;
+                    vertexes[3].y = 0;
+                    break;
+
+                case ContentAlignment.MiddleRight:
+                    sizeY = sizeY / 2;
+                    vertexes[0].x = -sizeX;
+                    vertexes[0].y = -sizeY;
+                    vertexes[1].x = 0;
+                    vertexes[1].y = -sizeY;
+                    vertexes[2].x = 0;
+                    vertexes[2].y = sizeY;
+                    vertexes[3].x = -sizeX;
+                    vertexes[3].y = sizeY;
+                    break;
+            }
+        }
+
+        public void draw()
+        {
+            GL.Color3(Color.White);
+            GL.PushMatrix();
+            GL.Translate(x, y, 0);
+            GL.Rotate(angle, Vector3.UnitZ);
+            GL.BindTexture(TextureTarget.Texture2D, texData.texture);
+            GL.VertexPointer(2, VertexPointerType.Float, objDrawer.sizeOfVertexStruct, vertexes);
+            GL.TexCoordPointer(2, TexCoordPointerType.Float, objDrawer.sizeOfTextureStruct, objDrawer.textStatic);
+            GL.DrawArrays(PrimitiveType.Quads, 0, 4);
+            GL.PopMatrix();
+        }
+    }
 
     class dPlanet
     {
         public objDrawer ground;
         public string name;
         public dSector[] sectors;
+        public textDrawer nameOfPlanet;
 
         public dPlanet(Planet_nature x)
         {
             int texID=-1;
             switch (x.type)
             {
-                case PlanetType.flat: texID = 1; break; 
+                case PlanetType.flat: texID = 1; break;
+                case PlanetType.sun: texID = 15; break;
             }
 
             ground = new objDrawer(x.radius * 2, x.radius * 2, texID);
@@ -129,11 +307,31 @@ namespace Helia_1_5_client
             ground.x = x.x;
             ground.y = x.y;
 
-            sectors = new dSector[x.sectors.Length];
-            for(int i=0; i<x.sectors.Length; i++)
+            if (x.sectors != null && x.sectors.Length > 0)
             {
-                sectors[i] = new dSector(x.sectors[i], x, i, x.sectors.Length);
+                sectors = new dSector[x.sectors.Length];
+                for (int i = 0; i < x.sectors.Length; i++)
+                {
+                    if(x.sectors[i]!=null)
+                    sectors[i] = new dSector(x.sectors[i], x, i, x.sectors.Length);
+                }
             }
+
+
+            if (x.type == PlanetType.sun)
+            {
+                nameOfPlanet = new textDrawer(x.radius, x.name, Color.Black, Color.Transparent, ContentAlignment.TopCenter);
+                nameOfPlanet.x = ground.x;
+                nameOfPlanet.y = ground.y;
+            }
+
+            else
+            {
+                nameOfPlanet = new textDrawer(x.radius * 2, x.name, Color.Blue, Color.Transparent, ContentAlignment.TopCenter);
+                nameOfPlanet.x = ground.x;
+                nameOfPlanet.y = ground.y + x.radius;
+            }
+            
         }
     }
 
@@ -145,6 +343,7 @@ namespace Helia_1_5_client
 
         public dSector(sector x, Planet_nature p, int number, int count)
         { 
+
             int texIDb=3;
             int texIDn=3;
 
@@ -154,15 +353,27 @@ namespace Helia_1_5_client
                 
             }
 
+            if(x.natureBuilding!=null)
             switch(x.natureBuilding.type)
             {
                 case buildingsEnum.grass: texIDn=2; break;
                 case buildingsEnum.forest: texIDn=0; break;
             }
 
-            building = new objDrawer(sizes.standartSizeSmall, sizes.standartSizeSmall, texIDb);
-            nature = new objDrawer(sizes.standartSizeSmall, sizes.standartSizeSmall, texIDn);
-            ownerOverlay = new objDrawer(sizes.standartSizeSmall, sizes.standartSizeSmall, 4);
+            
+
+            if(p.type!=PlanetType.sun)
+            {
+                building = new objDrawer(sizes.standartSizeSmall, sizes.standartSizeSmall, texIDb);
+                nature = new objDrawer(sizes.standartSizeSmall, sizes.standartSizeSmall, texIDn);
+                ownerOverlay = new objDrawer(sizes.standartSizeSmall, sizes.standartSizeSmall, 4);
+            }
+            else
+            {
+                building = new objDrawer(0, 0, 16);
+                nature = new objDrawer(0, 0, 16);
+                ownerOverlay = new objDrawer(0, 0, 16);
+            }
 
             building.x = p.x;
             nature.x = p.x;
@@ -196,8 +407,8 @@ namespace Helia_1_5_client
             building.x += xCorr;
             building.y -= yCorr;
 
-            ownerOverlay.x += xCorr / 1.7f;
-            ownerOverlay.y -= yCorr / 1.7f;
+            ownerOverlay.x += xCorr/2;
+            ownerOverlay.y -= yCorr/2;
         }
     }
 }

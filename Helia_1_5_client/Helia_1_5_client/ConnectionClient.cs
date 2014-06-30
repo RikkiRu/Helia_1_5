@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace Helia_1_5_client
 {
-    class ConnectionClient
+    class ConnectionClient:Form
     {
         Random rand = new Random();
         Socket ClientSocket;
@@ -20,6 +20,7 @@ namespace Helia_1_5_client
         Thread listen;
         int sizeOfMessage = 2048;
         BinaryFormatter binFormat = new BinaryFormatter();
+        public FormGame parent;
 
         public void connect()
         {
@@ -56,14 +57,20 @@ namespace Helia_1_5_client
                     case typeOfCommandClient.AddPlanetNature:
                         Render.planets.Add(new dPlanet((Planet_nature)data.data));
                         break;
+
                     case typeOfCommandClient.Exception:
                         MessageBox.Show(data.data.ToString());
                         break;
+
                     case typeOfCommandClient.AddPlayer:
                         Player p = (Player)data.data;
                         Player found = Render.players.Where(c => c.name == p.name).FirstOrDefault();
                         if (found != null) Render.players.Remove(found);
                         Render.players.Add(p);
+                        break;
+
+                    case typeOfCommandClient.thatsAll:
+                        Render.parent.startTimer();
                         break;
                 }
             }
