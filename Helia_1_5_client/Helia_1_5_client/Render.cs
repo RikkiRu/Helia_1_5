@@ -19,11 +19,14 @@ namespace Helia_1_5_client
 
         public static List<dPlanet> planets = new List<dPlanet>();
         public static List<Player> players = new List<Player>();
+        public static List<objDrawer> objects = new List<objDrawer>();
+
         public static objDrawer[] guiElemnts = new objDrawer[10];
         public static textDrawer[] guiElementsText = new textDrawer[10];
 
         public static textDrawer guiTextHeader;
         public static textDrawer guiTextDown;
+        public static objDrawer drawSelect = new objDrawer(0, 0, 18); //Отрисовка выбора планеты
 
         public static string changeText(string text, int sizeOut=100, ContentAlignment aligin = ContentAlignment.TopLeft)
         {
@@ -70,6 +73,7 @@ namespace Helia_1_5_client
         {
             planets.Clear();
             players.Clear();
+            objects.Clear();
 
             GL.ClearColor(1.0f, 1.0f, 1.0f, 1.0f);
             GL.Enable(EnableCap.Texture2D);
@@ -149,12 +153,18 @@ namespace Helia_1_5_client
                             planets[i].sectors[j].ownerOverlay.draw();
                             planets[i].sectors[j].nature.draw();
                             planets[i].sectors[j].building.draw();
-                            planets[i].nameOfPlanet.draw();
+                            if(planets[i].nameOfPlanet!=null) planets[i].nameOfPlanet.draw();
                         }
                     }
                 }
-                //
             }
+
+            for (int i = 0; i < objects.Count; i++ )
+            {
+                objects[i].draw();
+            }
+
+
             GL.PopMatrix();
 
             for (int i = 0; i < guiElemnts.Length; i++ )
@@ -166,7 +176,7 @@ namespace Helia_1_5_client
             guiTextHeader.draw();
             guiTextDown.draw();
 
-            
+        
         }
     }
 }

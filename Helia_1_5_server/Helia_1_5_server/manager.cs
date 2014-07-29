@@ -43,5 +43,17 @@ namespace Helia_1_5_server
         {
             connection.close();
         }
+
+        public static void makeUnit (Player who, UnitType type, float x, float y)
+        {
+            Unit nUn = new Unit();
+            nUn.type = type;
+            nUn.x = x;
+            nUn.y = y;
+            nUn.owner = who.name;
+
+            who.units.Add(nUn);
+            connection.sendToAll(new CommandClient(typeOfCommandClient.AddUnit, nUn));
+        }
     }
 }

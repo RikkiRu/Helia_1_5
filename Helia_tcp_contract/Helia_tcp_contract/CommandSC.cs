@@ -47,5 +47,6 @@ namespace Helia_tcp_contract
         AddPlanetNature,
         Exception,
         AddPlayer,
+        AddUnit,
     }
 }

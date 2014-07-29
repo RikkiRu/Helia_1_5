@@ -46,6 +46,8 @@ namespace Helia_1_5_client
 
         void StartListen()
         {
+           
+
             while (true)
             {
                 byte[] buffer = new byte[sizeOfMessage];

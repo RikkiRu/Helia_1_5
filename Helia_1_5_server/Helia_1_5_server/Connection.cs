@@ -84,6 +84,8 @@ namespace Helia_1_5_server
                             Console.WriteLine("Тук-тук! У нас новое подключение! " + connection.name);
                             connections.Add(connection);
 
+                            sendAll(connection.Socket);
+
                             Player searchPl = manager.players.Where(c => c.name == connection.name).FirstOrDefault();
                             if (searchPl == null)
                             {
@@ -93,8 +95,6 @@ namespace Helia_1_5_server
                             {
                                // searchPl.playerState = PlayerState.online; //ОБЯЗАТЕЛЬНО ВРУБИТЬ ПРИ РЕЛИЗЕ
                             }
-
-                            sendAll(connection.Socket);
                         }
                         catch(Exception ex)
                         {
@@ -153,20 +153,24 @@ namespace Helia_1_5_server
         //все данные игроку
         void sendAll(Socket connection)
         {
-            for (int i = 0; i < manager.players.Count; i++)
+            lock (connection)
             {
-                sendPlayer(connection, manager.players[i].name);
-            }
+                for (int i = 0; i < manager.players.Count; i++)
+                {
+                    sendPlayer(connection, manager.players[i].name);
+                }
 
-            for (int i = 0; i < manager.planets.Count; i++)
-            {
-                MemoryStream x = new MemoryStream();
-                binFormat.Serialize(x, new CommandClient(typeOfCommandClient.AddPlanetNature, manager.planets[i]));
-                connection.Send(x.GetBuffer());
+                for (int i = 0; i < manager.planets.Count; i++)
+                {
+                    MemoryStream x = new MemoryStream();
+                    binFormat.Serialize(x, new CommandClient(typeOfCommandClient.AddPlanetNature, manager.planets[i]));
+                    connection.Send(x.GetBuffer());
+                }
+                //
+                //
+
+                send(connection, new CommandClient(typeOfCommandClient.thatsAll, 0));
             }
-            //
-            //
-            send(connection, new CommandClient(typeOfCommandClient.thatsAll, 0));
         }
 
         void sendPlayer(Socket s, string name)
@@ -184,8 +188,20 @@ namespace Helia_1_5_server
             //user.playerState = PlayerState.online; ВКЛЮЧИТЬ НА РЕЛИЗЕ
             user.color = Color.Red;
             manager.players.Add(user);
+            sendToAll(new CommandClient(typeOfCommandClient.AddPlayer, user));
+
+            manager.makeUnit(user, UnitType.newPlayer, 0, 0);
         }
 
-       
+        public void sendToAll(CommandClient command)
+        {
+            lock (connections)
+            {
+                for (int i = 0; i < connections.Count; i++)
+                {
+                    send(connections[i].Socket, command);
+                }
+            }
+        }
     }
 }

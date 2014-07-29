@@ -9,6 +9,9 @@ using System.Linq;
 
 namespace Helia_1_5_client
 {
+    /// <summary>
+    /// Служебный. Хранит данные.
+    /// </summary>
     class modelData
     {
         public Bitmap[] Bitmaps = new Bitmap[1];
@@ -95,17 +98,20 @@ namespace Helia_1_5_client
         }
     }
 
-    struct vertexStruct
+    public struct vertexStruct
     {
         public float x;
         public float y;
     }
-    struct textureStruct
+    public struct textureStruct
     {
         public float u;
         public float v;
     }
 
+    /// <summary>
+    /// Загрузка текстур тут - основной класс отрисовки
+    /// </summary>
     class objDrawer
     {
         public static int sizeOfVertexStruct = sizeof(float) * 2;
@@ -156,7 +162,7 @@ namespace Helia_1_5_client
             textStatic[0].u = 0; textStatic[1].u = 1; textStatic[2].u = 1; textStatic[3].u = 0;
             textStatic[0].v = 0; textStatic[1].v = 0; textStatic[2].v = 1; textStatic[3].v = 1;
 
-            texData = new modelData[25];
+            texData = new modelData[30];
             texData[0] = new modelData("n_for");
             texData[1] = new modelData("pFlat");
             texData[2] = new modelData("n_grass");
@@ -165,7 +171,7 @@ namespace Helia_1_5_client
 
             texData[5] = new modelData("planetIcon");
             texData[6] = new modelData("o2");
-            texData[14] = new modelData("waterKaplya");
+            texData[7] = new modelData("h2o");
             texData[8] = new modelData("smile");
             texData[9] = new modelData("man");
 
@@ -173,10 +179,12 @@ namespace Helia_1_5_client
             texData[11] = new modelData("gears");
             texData[12] = new modelData("break");
             texData[13] = new modelData("book");
-            texData[7] = new modelData("h2o");
+            texData[14] = new modelData("waterKaplya");
 
             texData[15] = new modelData("sun", 3, 20);
             texData[16] = new modelData("onePixel");
+            texData[17] = new modelData("newPlayer");
+            texData[18] = new modelData("select");
         }
     }
 
@@ -287,14 +295,115 @@ namespace Helia_1_5_client
 
     class dPlanet
     {
+        public class dSector
+        {
+            public objDrawer building;
+            public objDrawer nature;
+            public objDrawer ownerOverlay;
+
+            public dSector(sector x, Planet_nature p, int number, int count)
+            {
+
+                int texIDb = 3;
+                int texIDn = 3;
+
+                if (x.building != null)
+                    switch (x.building.type)
+                    {
+
+                    }
+
+                if (x.natureBuilding != null)
+                    switch (x.natureBuilding.type)
+                    {
+                        case buildingsEnum.grass: texIDn = 2; break;
+                        case buildingsEnum.forest: texIDn = 0; break;
+                    }
+
+
+
+                if (p.type != PlanetType.sun)
+                {
+                    building = new objDrawer(sizes.standartSizeSmall, sizes.standartSizeSmall, texIDb);
+                    nature = new objDrawer(sizes.standartSizeSmall, sizes.standartSizeSmall, texIDn);
+                    ownerOverlay = new objDrawer(sizes.standartSizeSmall, sizes.standartSizeSmall, 4);
+                }
+                else
+                {
+                    building = new objDrawer(0, 0, 16);
+                    nature = new objDrawer(0, 0, 16);
+                    ownerOverlay = new objDrawer(0, 0, 16);
+                }
+
+                building.x = p.x;
+                nature.x = p.x;
+                building.y = p.y;
+                nature.y = p.y;
+                ownerOverlay.x = p.x;
+                ownerOverlay.y = p.y;
+
+                float secAngle = 360 / count * number;
+
+
+                building.angle = secAngle;
+                nature.angle = secAngle;
+                ownerOverlay.angle = secAngle;
+
+                Player owner = Render.players.Where(c => c.name == x.owner).FirstOrDefault();
+                if (owner != null)
+                {
+                    building.colorMask = owner.color;
+                    ownerOverlay.colorMask = owner.color;
+                }
+
+                secAngle = secAngle / 57.0f;
+
+                float xCorr = (float)Math.Sin((double)secAngle) * p.radius;
+                float yCorr = (float)Math.Cos((double)secAngle) * p.radius;
+
+                nature.x += xCorr;
+                nature.y -= yCorr;
+
+                building.x += xCorr;
+                building.y -= yCorr;
+
+                ownerOverlay.x += xCorr / 2;
+                ownerOverlay.y -= yCorr / 2;
+            }
+        }
+
         public objDrawer ground;
         public string name;
         public dSector[] sectors;
         public textDrawer nameOfPlanet;
+        public float radius;
+        public PlanetType type;
+
+        public void giveMeName()
+        {
+             if (type == PlanetType.sun)
+            {
+                nameOfPlanet = new textDrawer(radius, name, Color.Black, Color.Transparent, ContentAlignment.TopCenter);
+                nameOfPlanet.x = ground.x;
+                nameOfPlanet.y = ground.y;
+            }
+
+            else
+            {
+                nameOfPlanet = new textDrawer(radius * 2, name, Color.Blue, Color.Transparent, ContentAlignment.TopCenter);
+                nameOfPlanet.x = ground.x;
+                nameOfPlanet.y = ground.y + radius + 10;
+            }
+        }
+
 
         public dPlanet(Planet_nature x)
         {
             int texID=-1;
+
+            this.radius = x.radius;
+            this.type = x.type;
+
             switch (x.type)
             {
                 case PlanetType.flat: texID = 1; break;
@@ -316,99 +425,16 @@ namespace Helia_1_5_client
                     sectors[i] = new dSector(x.sectors[i], x, i, x.sectors.Length);
                 }
             }
-
-
-            if (x.type == PlanetType.sun)
-            {
-                nameOfPlanet = new textDrawer(x.radius, x.name, Color.Black, Color.Transparent, ContentAlignment.TopCenter);
-                nameOfPlanet.x = ground.x;
-                nameOfPlanet.y = ground.y;
-            }
-
-            else
-            {
-                nameOfPlanet = new textDrawer(x.radius * 2, x.name, Color.Blue, Color.Transparent, ContentAlignment.TopCenter);
-                nameOfPlanet.x = ground.x;
-                nameOfPlanet.y = ground.y + x.radius;
-            }
-            
         }
     }
 
-    class dSector
+    class dPLayers : Player
     {
-        public objDrawer building;
-        public objDrawer nature;
-        public objDrawer ownerOverlay;
+        class dUnits
+        {
 
-        public dSector(sector x, Planet_nature p, int number, int count)
-        { 
-
-            int texIDb=3;
-            int texIDn=3;
-
-            if(x.building!=null)
-            switch (x.building.type)
-            {
-                
-            }
-
-            if(x.natureBuilding!=null)
-            switch(x.natureBuilding.type)
-            {
-                case buildingsEnum.grass: texIDn=2; break;
-                case buildingsEnum.forest: texIDn=0; break;
-            }
-
-            
-
-            if(p.type!=PlanetType.sun)
-            {
-                building = new objDrawer(sizes.standartSizeSmall, sizes.standartSizeSmall, texIDb);
-                nature = new objDrawer(sizes.standartSizeSmall, sizes.standartSizeSmall, texIDn);
-                ownerOverlay = new objDrawer(sizes.standartSizeSmall, sizes.standartSizeSmall, 4);
-            }
-            else
-            {
-                building = new objDrawer(0, 0, 16);
-                nature = new objDrawer(0, 0, 16);
-                ownerOverlay = new objDrawer(0, 0, 16);
-            }
-
-            building.x = p.x;
-            nature.x = p.x;
-            building.y = p.y;
-            nature.y = p.y;
-            ownerOverlay.x = p.x;
-            ownerOverlay.y = p.y;
-
-            float secAngle = 360 / count*number;
-            
-
-            building.angle = secAngle;
-            nature.angle = secAngle;
-            ownerOverlay.angle = secAngle;
-
-            Player owner = Render.players.Where(c=>c.name==x.owner).FirstOrDefault();
-            if(owner!=null)
-            {
-                building.colorMask = owner.color;
-                ownerOverlay.colorMask = owner.color;
-            }
-
-            secAngle = secAngle / 57.0f;
-
-            float xCorr = (float)Math.Sin((double)secAngle) * p.radius;
-            float yCorr = (float)Math.Cos((double)secAngle) * p.radius;
-
-            nature.x += xCorr;
-            nature.y -= yCorr;
-
-            building.x += xCorr;
-            building.y -= yCorr;
-
-            ownerOverlay.x += xCorr/2;
-            ownerOverlay.y -= yCorr/2;
         }
     }
+
+   
 }

@@ -8,21 +8,13 @@ namespace Helia_tcp_contract
     public class Player
     {
         public string name;
-        public Color color;
+        public Color color = Color.White;
         public PlayerState playerState;
 
-        public Dictionary<string, Relations> relations;
-        public List<Planet_government> governments;
-        public List<Unit> units;
+        public List<Planet_government> governments = new List<Planet_government>();
+        public List<Unit> units = new List<Unit>();
     }
 
-    [Serializable]
-    public enum Relations
-    {
-        none,
-        enemy,
-        friend
-    }
 
     [Serializable]
     public enum PlayerState
